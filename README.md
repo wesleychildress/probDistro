@@ -1,1 +1,1 @@
-# probabilityDistribution
+# Probability Distribution
