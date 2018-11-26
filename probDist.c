@@ -7,7 +7,7 @@
 *   -
 *   -
 *   @@@@@@@@@  sizeOfWorld must be even and divisible  @@@@@@@@@
-* AUTHORS: Alieu, Andre, Wezley
+* AUTHORS: Alieu, Andre, Wesley
 * LAST REVISED: 11/26/18
 ****************************************************************************/
 #include "mpi.h"
@@ -16,7 +16,7 @@
 #include <time.h>
 #include <assert.h>
 #include <math.h>
-#define  ARRAYSIZE	40
+#define  ARRAYSIZE	4000
 #define  MASTER		0
 
 /* structs */
@@ -26,11 +26,6 @@ struct vertex{
 struct triangle{
     struct vertex r, s, t;
 };
-
-/* global */
-//struct vertex r,s,t:
-//struct triangle A[ARRAYSIZE];
-//float area[ARRAYSIZE];
 
 /* functions */
 void randomInscribedTri(struct triangle *);
@@ -46,14 +41,17 @@ int main (int argc, char *argv[])
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
+    /* mpi struct vertex */
     MPI_Datatype dt_vertex;
     MPI_Type_contiguous(2, MPI_FLOAT, &dt_vertex);
     MPI_Type_commit(&dt_vertex);
+    /* mpi struct triangle */
     MPI_Datatype dt_triangle;
     MPI_Type_contiguous(3, dt_vertex, &dt_triangle);
     MPI_Type_commit(&dt_triangle);
-
+    /* array of vertices */
     struct triangle A[ARRAYSIZE];
+    /* array for calculated areas */
     float area[ARRAYSIZE];
 
     if (ARRAYSIZE % numtasks != 0)
@@ -102,10 +100,12 @@ int main (int argc, char *argv[])
         }
 
         /* print sample results */
+        printf("\n");
+        printf("-----------------------\n");
         for(i=0; i<ARRAYSIZE; i++)
         {
             printStruct(A[i]);
-            printf("AREA: %0.3f\n", area[i]);
+            printf(" AREA: %0.3f\n", area[i]);
             printf("-----------------------\n");
         }
 
